@@ -1,14 +1,11 @@
-# SPDX-FileCopyrightText: 2021 Kattni Rembor for Adafruit Industries
-#
-# SPDX-License-Identifier: Unlicense
 """
 KEY BINDINGS FOR ADAFRUIT RP2040 MACRO PAD
 0 = SPOTIFY (CTRL + ALT + S)
-1 = DISCORD (CTRL + ALT + D)
-2 = PRINT("HELLO WORLD!")
-3 = NA
-4 = NA
-5 = NA
+1 = UP ARROW
+2 = DISCORD (CTRL + ALT + D)
+3 = LEFT ARROW
+4 = DOWN ARROW
+5 = RIGHT ARROW
 6 = PREVIOUS TRACK
 7 = PAUSE/PLAY
 8 = NEXT TRACK
@@ -19,23 +16,50 @@ ENCODER = VOLUME/MUTE
 """
 from adafruit_macropad import MacroPad
 from adafruit_hid.consumer_control_code import ConsumerControlCode
+from rainbowio import colorwheel
+import os
 
 macropad = MacroPad()
 
+tone = 250
 last_position = 0
+
+macropad.display_image("mateo.bmp")
+
 while True:
     key_event = macropad.keys.events.get()
+    if key_event:
+        if key_event.pressed:
+            macropad.pixels[key_event.key_number] = colorwheel(200)
+            macropad.start_tone(tone)
+
+        else:
+            macropad.pixels.fill((0, 0, 0))
+            macropad.stop_tone()
 
     if key_event:
         if key_event.pressed:
             if key_event.key_number == 0: #OPEN SPOTIFY
+                #os.system('"C:/Users/Nico/Desktop/Spotify/Spotify.exe"')
                 macropad.keyboard.press(macropad.Keycode.CONTROL, macropad.Keycode.ALT, macropad.Keycode.S)
                 macropad.keyboard.release_all()
-            if key_event.key_number == 1: #OPEN DISCORD
+            if key_event.key_number == 1: #UP ARROW
+                macropad.keyboard.press(macropad.Keycode.UP_ARROW)
+                macropad.keyboard.release_all()
+                #macropad.keyboard.press(macropad.Keycode.CONTROL, macropad.Keycode.ALT, macropad.Keycode.D)
+                #macropad.keyboard.release_all()
+            if key_event.key_number == 2: #OPEN DISCORD
                 macropad.keyboard.press(macropad.Keycode.CONTROL, macropad.Keycode.ALT, macropad.Keycode.D)
                 macropad.keyboard.release_all()
-            if key_event.key_number == 2: #PRINTS HELLO WORLD LOL
-                macropad.keyboard_layout.write("Hello, World!")
+            if key_event.key_number == 3: #LEFT ARROW
+                macropad.keyboard.press(macropad.Keycode.LEFT_ARROW)
+                macropad.keyboard.release_all()
+            if key_event.key_number == 4: #DOWN ARROW
+                macropad.keyboard.press(macropad.Keycode.DOWN_ARROW)
+                macropad.keyboard.release_all()
+            if key_event.key_number == 5: #RIGHT ARROW
+                macropad.keyboard.press(macropad.Keycode.RIGHT_ARROW)
+                macropad.keyboard.release_all()
             if key_event.key_number == 6: #PREVIOUS TRACK
                 macropad.consumer_control.send(
                 macropad.ConsumerControlCode.SCAN_PREVIOUS_TRACK
